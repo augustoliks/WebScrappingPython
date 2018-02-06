@@ -5,10 +5,7 @@ from bs4 import BeautifulSoup #Biblioteca para analises
 page = requests.get("http://dataquestio.github.io/web-scraping-pages/simple.html") #instanciando o objeto page passando como argumento a url da pagina
 soup = BeautifulSoup(page.content, 'html.parser') #instancia de um Objeto "soup" com a classe BeautifulSoup, passando os conteudo da pagina e o analisador(parser)
 
-print ("page") #retorna um codigo de estado HTTP, que indica se a pagina foi baixada com sucesso...
-'''
->>> Response
-'''
+print (page.status_code) #retorna um codigo de estado HTTP, que indica se a pagina foi baixada com sucesso...
 
 [type(item) for item in list(soup.children)] #mostra os subtags do objeto pai, // mostra child do parent indicado
 ''' o retorno sera uma list com o seguinte tipo dos atributos child do objeto soup conteudo...
