@@ -13,7 +13,7 @@ class ScrapEmpregaSjc():
     def __init__(self):
 
         self.urlBase = "https://www.empregasaojosecampos.com" # Url do site
-        self.jobs
+        self.jobs = {}
 
     def make_soup(self, url):
         '''
