@@ -6,16 +6,16 @@ import datetime
 
 urlBase = "https://www.empregasaojosecampos.com"
 
-def make_soup(url):
+def make_soup(url): #funcao para instanciar objetos "soup", para o reaproveitamento de codigo
     page = requests.get(url)
     return BeautifulSoup(page.content, 'html.parser')
 
-def calcular_data(data):
+def calcular_data(data):    #funcao para calcular a distancia entre duas datas
     dataPublicacao = datetime.date(day = int( data[0:2] ), month = int( data[3:5] ), year = int( data[-4:] ) )
     hoje = datetime.date.today()
     return (hoje - dataPublicacao).days
 
-def empregos_api(url):
+def empregos_api(url):  #core do programa, esta funcao e responsavel por navegar no codigo fonte do html e filtrar os dados condizentes com o ideal do programa
     soup = make_soup(url)
     lista_vagas = soup.findAll("div", class_="blog-post")
     k = 0
