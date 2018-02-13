@@ -59,19 +59,9 @@ nivelAcademico = caracteristicas[7]
 statusVaga = caracteristicas[8]
 tempoContrato = caracteristicas[9]
 
-
-import requests
-import json
-from bs4 import BeautifulSoup
-
-def empregaSaoJose_api():
-    URL_ULTIMOS_RESULTADOS = "http://www1.caixa.gov.br/loterias/loterias/megasena/megasena_pesquisa_new.asp"
-    page = requests.get(URL_ULTIMOS_RESULTADOS)
-    bs = BeautifulSoup(page.content, "html.parser")
-    numeros_sena = [ n.contents[0] for n in bs.findAll('li')[:6]]
-    results = page.content.split('|')
-
-    return {'cidade': results[2], 'estado': results[3], 'pais': results[4],
-         'salario': results[5], 'nivelAcademico': results[7], 'statusVaga': results[8]}
-
-print ( json.dumps(megasena_api()) )
+'''Salvar JSON  '''
+import panda as pd
+jobs[0] = {'nome':'carlos', "sobrenome":"augusto"}
+pd.DataFrame(jobs).to_json('output.json')
+>>> print(jobs)
+{0: {'nome': 'carlos', 'sobrenome': 'augusto'}, 'nome': 'carlos', 'sobrenome': 'augusto'}
