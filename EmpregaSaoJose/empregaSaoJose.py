@@ -1,6 +1,6 @@
-import datetime #nesse caso fara uma solicitacao GET ao servidor, para o download dos conteudos HTML da pagina solicitada
-import requests #Biblioteca que possibaixar
-import utils as tools # Funcoes criadas pelo desenvolvedor (eu) para agilizar e otimizar o codigo (contem calculo de datas)
+import datetime #possibilita a pausa segundos no codigo para evitar possivel DoS de flood de requisao ao site, preservando o funcionamento do memso
+import requests #nesse caso fara uma solicitacao GET ao servidor, para o download dos conteudos HTML da pagina solicitada
+import utils as tools # Funcoes criadas pelo desenvolvedor (eu) para agilizar e otimizar o codigo (contem calculo de datas tratameto de string)
 from time import sleep  # Funcao para evitar DoS de flood de requisao ao site, preservando o funcionamento do memso
 from bs4 import BeautifulSoup # Biblioteca para o parseameto do codigo html
 import pandas as pd # Para salvar o Json preservando a integridade dos dados
@@ -15,12 +15,13 @@ class ScrapEmpregaSjc():
         self.urlBase = "https://www.empregasaojosecampos.com" # Url do site
         self.jobs = {}
 
+
     def make_soup(self, url):
         '''
             Funcao para instanciar objetos "soup", para o reaproveitamento de codigo
         '''
 
-        page = requests.get(url #Obtendo o codigo fonte da pagina
+        page = requests.get(url) #Obtendo o codigo fonte da pagina
         return BeautifulSoup(page.content, 'html.parser') #retorna uma instancia "Soup" da pagina
 
 
@@ -30,7 +31,7 @@ class ScrapEmpregaSjc():
             filtrar os dados condizentes com o objetivo do programa
         '''
 
-        soup = make_soup(url)   #Instancia um objeto "soup" com a url da pagina
+        soup = self.make_soup(url)   #Instancia um objeto "soup" com a url da pagina
         lista_vagas = soup.findAll("div", class_ = "blog-post") # Cria uma lista com o codigo que detem os enunciados da pagina
 
         k = 0 # contador para navegar entre os indices dos enunciados da pagina
@@ -38,27 +39,25 @@ class ScrapEmpregaSjc():
             headerVaga = lista_vagas[k].find("span", class_ = "blog-post-title") #Filtra apenas os dados respectivos ao titulo da vaga
             dadosVaga = lista_vagas[k].find("div", class_ = "metadata") #Filtra os dados referente ao corpo do enunciado da vaga
             caracteristicas = dadosVaga.findAll("span") #Faz outro filtro para facilitar a obtencao dos dados que interessam
-            nomeVaga = headerVaga.getText()[1:-1] #Esta variavel foi criada aqui para possibilitar o fatiamento da string, assim tirando os "\n\t", preservando a consistencia do dado
-            data = dadosVaga.find("time", class_ = "value-title").getText()[-10:] #Esta variavel foi criada aqui para possibilitar o fatiamento da string, assim tirando os "\n\t", preservando a consistencia do dado
+            nomeVaga = tools.tratar_nome_vaga(self, headerVaga.getText()) #Esta variavel passara por um tratamento", preservando a consistencia do dado
 
             self.jobs[nomeVaga] = {
                     'local': caracteristicas[2].getText() + ', ' + caracteristicas[3].getText() + ' - ' + caracteristicas[4].getText(),
-                    'data_vaga': data,
+                    'data_vaga':  dadosVaga.find("time", class_ = "value-title").getText().strip(),
                     'salario': caracteristicas[5].getText(),
                     'como_concorrer': headerVaga.find("a").get("href"),
-                    'mais_info': 'Vaga postada há: ' + tools.calcular_data(data) + " dias - " +
-                        'Nivel Academico: ' + caracteristicas[7].getText()+' - ' +
-                        'Status Vaga:' + caracteristicas[8].getText()
+                    'mais_info':
+                        'Nivel Academico: ' + caracteristicas[7].getText()+' - '
+                        +'Status Vaga:' + caracteristicas[8].getText()
                 }
 
-            print (self.jobs[nomeVaga]+"\n\n") #Efeitos de visualizacao
-
+            print (self.jobs[nomeVaga]) #Efeitos de visualizacao
             pd.DataFrame(self.jobs).to_json('empregaOutput.json') # Salvando o resultado em .json
 
             k += 1 #Incrementa o contador
-            sleep(3) #Pausa de 3 segundos no codigo para evitar possivel DoS de flood de requisao ao site, preservando o funcionamento do memso
+            sleep(3) #Pausa de 3 segundos no codigo para evitar possivel DoS de flood de requisao ao site, preservando o funcionamento do mesmo
 
-    def pes_ultimas_vagas():
+    def pes_ultimas_vagas(self):
         '''
             Funcao responsavel por fazer o scrap das paginas
         '''
@@ -72,12 +71,13 @@ class ScrapEmpregaSjc():
 
         while (pageNumber <= qtd_pagina):   #laco para percorrer as paginas
             if pageNumber == 1: # caso for pagina "1", nao eh necessario a modificacao da url
-                empregos_api(self.urlBase) # executa o scrap da "pagina 1"
+                self.empregos_api(self.urlBase) # executa o scrap da "pagina 1"
             else:
-                empregos_api(self.urlBase + "/page/" + str(pageNumber) ) #faz o scrap modificando a url
+                self.empregos_api(self.urlBase + "/page/" + str(pageNumber) ) #faz o scrap modificando a url
             pageNumber+=1 # avanca o numero da pagina
 
-    def pes_vaga_nome(vaga):
+
+    def pes_vaga_nome(self, vaga):
         '''
             Funcao responsavel por fazer o scrap das paginas filrando por nome da vaga
         '''
@@ -93,13 +93,12 @@ class ScrapEmpregaSjc():
         pageNumber = 1 # Contador de pagina
         qtd_pagina = 5 # Quantidade de paginas que sera feito o scrap
 
-        while (pageNumber <= qtd_pagina): #laco para percorrer as paginas
+        while (pageNumber <= qtd_pagina): #laco para percoperrrer as paginas
             if pageNumber == 1: # caso for pagina "1", tera modificacoes da url diferente com as demais
-                empregos_api(self.urlBase + "/?s=" + vaga) # executa o scrap da "pagina 1"
+                self.empregos_api(self.urlBase + "/?s=" + vaga) # executa o scrap da "pagina 1"
             else:
-                empregos_api(self.urlBase + "/page/" + str(pageNumber) + "?s=" + vaga) #faz o scrap modificando a url
+                self.empregos_api(self.urlBase + "/page/" + str(pageNumber) + "?s=" + vaga) #faz o scrap modificando a url
             pageNumber+=1 # avanca o numero da pagina
-
 
 if __name__ == '__main__':
     categorias = ['Ajudante','Analista','Assistente','Atendente','Auxiliar','Balconista','Caixa','Comercial','Coordenador','Copeira','Cozinheiro','Departamento Pessoal','Empilhadeira','Eletricista','Encarregado','Enfermagem','Estoquista','Farmacêutico','Jovem Aprendiz','Mecânico','Manutenção','Motorista','Nutricionista','Produção','Operador','Pedreiro','Secretária','Promotor','Recepcionista','RHServiços Gerais','Telemarketing','Técnico','Vendedor']

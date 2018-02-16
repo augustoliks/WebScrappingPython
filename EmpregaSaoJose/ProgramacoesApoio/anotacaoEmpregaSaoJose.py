@@ -65,3 +65,21 @@ jobs[0] = {'nome':'carlos', "sobrenome":"augusto"}
 pd.DataFrame(jobs).to_json('output.json')
 >>> print(jobs)
 {0: {'nome': 'carlos', 'sobrenome': 'augusto'}, 'nome': 'carlos', 'sobrenome': 'augusto'}
+
+
+'''Ler Json Tabulado'''
+>>> jobs['auxiliar'] = {
+        "como_concorrer":"site",
+        "data_vaga":"15\/02\/2018",
+        "local":" BR",
+        "mais_info":"Vaga:Efetiva",
+        "salario":" 1506"
+    }
+>>> df = pd.DataFrame( jobs )
+>>> print(df)
+                                   auxiliar administrativo pcd     \
+como_concorrer  https://www.empregasaojosecampos.com/2018/02/a...
+data_vaga                                              15/02/2018
+local                                São José dos Campos, SP - BR
+mais_info            Nivel Academico: Médio - Status Vaga:Efetiva
+salario                                                      1506
