@@ -1,0 +1,12 @@
+git rm EmpregaSaoJose/EmpregaSaoJose/empregaOutput.json
+git rm EmpregaSaoJose/EmpregaSaoJose/empregaSaoJose.py
+git rm EmpregaSaoJose/EmpregaSaoJose/jupyter-notebook.ipynb
+git rm EmpregaSaoJose/EmpregaSaoJose/utils.py
+git rm EmpregaSaoJose/ProgramacoesApoio/anotacaoEmpregaSaoJose.py
+git rm EmpregaSaoJose/ProgramacoesApoio/testesDiretos.py
+git rm EmpregaSaoJose/__pycache__/utils.cpython-35.pyc
+git rm EmpregaSaoJose/empregaOutput.json
+git rm EmpregaSaoJose/empregaSaoJose.py
+git rm EmpregaSaoJose/utils.py
+git rm scrapWikipedia.py
+
