@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
+Verificar o tempo de execucao do codigo:
+     python -m cProfile programa.py
+
 page = requests.get("https://www.empregasaojosecampos.com")
 soup = BeautifulSoup(page.content, 'html.parser')
 
